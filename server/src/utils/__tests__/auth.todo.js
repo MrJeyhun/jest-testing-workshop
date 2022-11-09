@@ -1,27 +1,49 @@
+import {isPasswordAllowed, userToJSON} from "../auth"
+
+describe('isPasswordAllowed', () => {
+  const allowedPwds = ['qwewqeW#55']
+  const disAllowedPwds = ['', 'ffffffffffff', '8888888888']
+
+  allowedPwds.forEach(pwd => {
+    it(`"${pwd}" should be allowed`, () => {
+      expect(isPasswordAllowed(pwd)).toBe(true)
+    })
+  })
+
+  disAllowedPwds.forEach(pwd => {
+    it(`"${pwd}" should not be allowed`, () => {
+      expect(isPasswordAllowed(pwd)).toBe(false)
+    })
+  })
+})
+
 test('isPasswordAllowed only allows some passwords', () => {
-  // here's where I'll demo things for you :)
+  expect(isPasswordAllowed('')).toBe(false)
+  expect(isPasswordAllowed('11111111')).toBe(false)
+  expect(isPasswordAllowed('ffffffff')).toBe(false)
+  expect(isPasswordAllowed('qwewqeW#55')).toBe(true)
 })
 
 test('userToJSON excludes secure properties', () => {
-  // Here you'll need to create a test user object
-  // pass that to the userToJSON function
-  // and then assert that the test user object
-  // doesn't have any of the properties it's not
-  // supposed to.
-  // Here's an example of a user object:
-  // const user = {
-  //   id: 'some-id',
-  //   username: 'sarah',
-  //   // ↑ above are properties which should
-  //   // be present in the returned object
-  //
-  //   // ↓ below are properties which shouldn't
-  //   // be present in the returned object
-  //   exp: new Date(),
-  //   iat: new Date(),
-  //   hash: 'some really long string',
-  //   salt: 'some shorter string',
-  // }
+  const safeUser = {
+    id: 'some-id',
+    username: 'sarah',
+  }
+
+  const user = {
+    ...safeUser,
+    // ↑ above are properties which should
+    // be present in the returned object
+  
+    // ↓ below are properties which shouldn't
+    // be present in the returned object
+    exp: new Date(),
+    iat: new Date(),
+    hash: 'some really long string',
+    salt: 'some shorter string',
+  }
+  const jsonUser = userToJSON(user)
+  expect(jsonUser).toEqual(safeUser)
 })
 
 //////// Elaboration & Feedback /////////
